@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import './info.scss';
 import { WeatherNow } from '../weatherNow';
 import { WeatherDetails } from '../weatherDetails';
 import { WeatherForecast } from '../weatherForecast';
 import { Button } from './button';
+import { Loader } from '../loader';
 
 const tabs = {
   now: 'Now',
@@ -14,6 +16,13 @@ const tabs = {
 
 export function Info() {
   const [tab, setTab] = useState(tabs.now);
+
+  const state = useSelector((state) => state);
+  console.log(state);
+
+  const isLoaderActive =
+    state.selectedCityData.isFetching ||
+    state.selectedCityForecastData.isFetching;
 
   let open;
 
@@ -36,7 +45,10 @@ export function Info() {
 
   return (
     <div className="info">
-      <div className="info__content">{open}</div>
+      <div className="info__content">
+        {isLoaderActive && <Loader />}
+        {open}
+      </div>
 
       <div className="info__tabs">
         <ul className="info__ul">

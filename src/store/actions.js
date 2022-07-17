@@ -84,7 +84,7 @@ function fetchWeatherForecastData(city) {
         if (json.cod >= '400') {
           alert(json.message);
         } else {
-          dispatch(receiveWeatherForecastData(json));
+          setTimeout(() => dispatch(receiveWeatherForecastData(json)), 200);
         }
       });
   };

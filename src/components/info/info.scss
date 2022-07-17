@@ -11,6 +11,7 @@
     flex-grow: 1;
     flex-basis: 0;
     overflow: scroll;
+    position: relative;
   }
 
   &__tabs {
