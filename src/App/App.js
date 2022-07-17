@@ -21,6 +21,7 @@ export function App() {
     dispatch(fetchWeatherData(city));
     dispatch(requestWeatherForecastData());
     dispatch(fetchWeatherForecastData(city));
+    // eslint-disable-next-line
   }, []);
 
   return (
