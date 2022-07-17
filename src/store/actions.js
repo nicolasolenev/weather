@@ -19,6 +19,7 @@ function setSelectedCity(city) {
 }
 
 function addFavoriteCity(city) {
+  console.log(city);
   return {
     type: ADD_FAVORITE_CITY,
     city,
