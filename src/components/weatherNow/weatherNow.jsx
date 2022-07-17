@@ -7,6 +7,7 @@ import { getIconUrl } from '../../api';
 
 export function WeatherNow() {
   const data = useSelector((state) => state.selectedCityData.data);
+  const favoriteCities = useSelector((state) => state.favoriteCities);
 
   const dispatch = useDispatch();
 
@@ -24,11 +25,13 @@ export function WeatherNow() {
       />
       <div className="weather__city">{data.name || ''}</div>
       <div className="weather__add-location">
-        <button
-          className="weather__add-location-button"
-          title="add to favorite"
-          onClick={addHandler}
-        />
+        {!favoriteCities.includes(data.name) && (
+          <button
+            className="weather__add-location-button"
+            title="add to favorite"
+            onClick={addHandler}
+          />
+        )}
       </div>
     </div>
   );
