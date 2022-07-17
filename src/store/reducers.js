@@ -19,15 +19,13 @@ function selectedCity(state = 'Moscow', action) {
   }
 }
 
-function favoriteCities(state = {}, action) {
+function favoriteCities(state = [], action) {
   switch (action.type) {
     case ADD_FAVORITE_CITY:
-      return { ...state, [action.city]: action.city };
+      return [...state, action.city];
 
     case DELETE_FAVORITE_CITY:
-      const newState = { ...state };
-      delete newState[action.city];
-      return newState;
+      return [...state].filter((city) => city !== action.city);
 
     default:
       return state;
