@@ -72,11 +72,10 @@ export const weatherSlice = createSlice({
       }
     },
 
-    [fetchWeatherData.rejected]: (state, action) => {
+    [fetchWeatherData.rejected]: (state) => {
       state.data = {
         isFetching: false,
-        errorMessage:
-          'Oops, something went wrong. We apologize for that. Contact support, please.',
+        errorMessage: 'Oops, something went wrong ;(',
         weather: {},
         forecast: {},
       };
