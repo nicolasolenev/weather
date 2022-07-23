@@ -14,9 +14,7 @@ export function App() {
   useEffect(() => {
     const geo = navigator.geolocation;
 
-    const successGeo = async (data) => {
-      const coords = data.coords;
-
+    const successGeo = async ({ coords }) => {
       dispatch(
         fetchWeatherData({
           isGeo: true,
