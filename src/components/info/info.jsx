@@ -7,6 +7,7 @@ import { WeatherDetails } from '../weatherDetails';
 import { WeatherForecast } from '../weatherForecast';
 import { Button } from './button';
 import { Loader } from '../loader';
+import { Popup } from '../popup';
 
 const tabs = {
   now: 'Now',
@@ -17,12 +18,10 @@ const tabs = {
 export function Info() {
   const [tab, setTab] = useState(tabs.now);
 
-  const state = useSelector((state) => state);
-  console.log(state);
+  const data = useSelector((state) => state.data);
 
-  const isLoaderActive =
-    state.selectedCityData.isFetching ||
-    state.selectedCityForecastData.isFetching;
+  const isLoaderActive = data.isFetching;
+  const isFetchingError = data.errorMessage;
 
   let open;
 
@@ -47,6 +46,7 @@ export function Info() {
     <div className="info">
       <div className="info__content">
         {isLoaderActive && <Loader />}
+        {isFetchingError && <Popup type="error" text={data.errorMessage} />}
         {open}
       </div>
 

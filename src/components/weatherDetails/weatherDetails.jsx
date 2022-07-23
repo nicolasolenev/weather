@@ -5,7 +5,7 @@ import './weatherDetails.scss';
 import { getTime } from '../../functions';
 
 export function WeatherDetails() {
-  const data = useSelector((state) => state.selectedCityData.data);
+  const data = useSelector((state) => state.data.weather);
 
   return (
     <div className="weather__details">

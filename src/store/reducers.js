@@ -1,97 +1,89 @@
-import { combineReducers } from 'redux';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-import {
-  SET_SELECTED_CITY,
-  ADD_FAVORITE_CITY,
-  DELETE_FAVORITE_CITY,
-  REQUEST_WEATHER_DATA,
-  RECEIVE_WEATHER_DATA,
-  REQUEST_WEATHER_FORECAST_DATA,
-  RECEIVE_WEATHER_FORECAST_DATA,
-} from './types';
+import { getRequest } from '../api';
 
-function selectedCity(state = 'Moscow', action) {
-  switch (action.type) {
-    case SET_SELECTED_CITY:
-      return action.city;
-    default:
-      return state;
-  }
-}
-
-function favoriteCities(state = [], action) {
-  switch (action.type) {
-    case ADD_FAVORITE_CITY:
-      return [...state, action.city];
-
-    case DELETE_FAVORITE_CITY:
-      return [...state].filter((city) => city !== action.city);
-
-    default:
-      return state;
-  }
-}
-
-function selectedCityData(
-  state = {
+const initialState = {
+  selectedCity: 'Aktobe',
+  favoriteCities: [],
+  data: {
     isFetching: false,
-    data: {},
+    errorMessage: '',
+    weather: {},
+    forecast: {},
   },
-  action
-) {
-  switch (action.type) {
-    case REQUEST_WEATHER_DATA:
-      return { ...state, isFetching: true };
+};
 
-    case RECEIVE_WEATHER_DATA:
-      const data = action.json;
-      return {
-        isFetching: false,
-        data: {
-          name: data.name,
-          temperature: Math.round(data.main.temp),
-          icon: data.weather[0].icon,
-          feelsLike: Math.round(data.main.feels_like),
-          weather: data.weather[0].main,
-          sunrise: data.sys.sunrise,
-          sunset: data.sys.sunset,
-        },
-      };
+export const fetchWeatherData = createAsyncThunk(
+  'weather/fetchWeatherData',
+  getRequest
+);
 
-    default:
-      return state;
-  }
-}
+export const weatherSlice = createSlice({
+  name: 'weather',
+  initialState,
+  reducers: {
+    addFavorite: (state, action) => {
+      state.favoriteCities.push(action.payload.city);
+    },
 
-function selectedCityForecastData(
-  state = {
-    isFetching: false,
-    data: {},
+    deleteFavorite: (state, action) => {
+      state.favoriteCities = [...state.favoriteCities].filter(
+        (city) => city !== action.payload.city
+      );
+    },
   },
-  action
-) {
-  switch (action.type) {
-    case REQUEST_WEATHER_FORECAST_DATA:
-      return { ...state, isFetching: true };
 
-    case RECEIVE_WEATHER_FORECAST_DATA:
-      const data = action.json;
-      return {
+  extraReducers: {
+    [fetchWeatherData.pending]: (state) => {
+      state.data.isFetching = true;
+    },
+
+    [fetchWeatherData.fulfilled]: (state, action) => {
+      const data = action.payload;
+      const isValid =
+        Number(data.weather.cod) === 200 && Number(data.forecast.cod) === 200;
+
+      if (isValid) {
+        const cityName = data.weather.name;
+
+        state.selectedCity = cityName;
+
+        state.data = {
+          isFetching: false,
+          errorMessage: '',
+          weather: {
+            name: cityName,
+            temperature: Math.round(data.weather.main.temp),
+            icon: data.weather.weather[0].icon,
+            feelsLike: Math.round(data.weather.main.feels_like),
+            weather: data.weather.weather[0].main,
+            sunrise: data.weather.sys.sunrise,
+            sunset: data.weather.sys.sunset,
+          },
+          forecast: data.forecast,
+        };
+      } else {
+        state.data = {
+          isFetching: false,
+          errorMessage: data.weather.message ?? data.forecast.message,
+          weather: {},
+          forecast: {},
+        };
+      }
+    },
+
+    [fetchWeatherData.rejected]: (state, action) => {
+      state.data = {
         isFetching: false,
-        data: {
-          name: data.city.name,
-          list: data.list,
-        },
+        errorMessage:
+          'Oops, something went wrong. We apologize for that. Contact support, please.',
+        weather: {},
+        forecast: {},
       };
-
-    default:
-      return state;
-  }
-}
-
-export const rootReducer = combineReducers({
-  selectedCity,
-  favoriteCities,
-  selectedCityData,
-  selectedCityForecastData,
+    },
+  },
 });
+
+export const { addFavorite, deleteFavorite } = weatherSlice.actions;
+
+export default weatherSlice.reducer;

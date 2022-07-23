@@ -1,30 +1,21 @@
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import './search.scss';
-import {
-  setSelectedCity,
-  requestWeatherData,
-  fetchWeatherData,
-  requestWeatherForecastData,
-  fetchWeatherForecastData,
-} from '../../store/actions';
+import { fetchWeatherData } from '../../store/reducers';
 
 export function Search() {
   const dispatch = useDispatch();
-  const city = useSelector((state) => state.selectedCity);
+  const [value, setValue] = useState('');
 
   const formHandler = (e) => {
     e.preventDefault();
-    e.target.reset();
-    dispatch(requestWeatherData());
-    dispatch(fetchWeatherData(city));
-    dispatch(requestWeatherForecastData());
-    dispatch(fetchWeatherForecastData(city));
+    dispatch(fetchWeatherData({ city: value }));
+    setValue('');
   };
 
   const inputHandler = (e) => {
-    dispatch(setSelectedCity(e.target.value));
+    setValue(e.target.value);
   };
 
   return (
@@ -34,6 +25,7 @@ export function Search() {
           className="search__input"
           type="text"
           placeholder="Aktobe"
+          value={value}
           onChange={inputHandler}
         />
 

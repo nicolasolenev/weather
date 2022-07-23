@@ -5,11 +5,11 @@ import './weatherForecast.scss';
 import { ForecastCard } from './forecastCard';
 
 export function WeatherForecast() {
-  const data = useSelector((state) => state.selectedCityForecastData.data);
+  const data = useSelector((state) => state.data.forecast);
 
   return (
     <div className="weather__forecast">
-      <h2 className="weather__forecast_city">{data.name || 'City'}</h2>
+      <h2 className="weather__forecast_city">{data?.city?.name || 'City'}</h2>
 
       <div className="weather__forecast_cards">
         {data.list &&

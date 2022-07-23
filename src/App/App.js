@@ -5,22 +5,30 @@ import './App.scss';
 import { Search } from '../components/search';
 import { Info } from '../components/info';
 import { Locations } from '../components/locations';
-import {
-  requestWeatherData,
-  fetchWeatherData,
-  requestWeatherForecastData,
-  fetchWeatherForecastData,
-} from '../store/actions';
+import { fetchWeatherData } from '../store/reducers';
 
 export function App() {
   const dispatch = useDispatch();
   const city = useSelector((state) => state.selectedCity);
 
   useEffect(() => {
-    dispatch(requestWeatherData());
-    dispatch(fetchWeatherData(city));
-    dispatch(requestWeatherForecastData());
-    dispatch(fetchWeatherForecastData(city));
+    const geo = navigator.geolocation;
+
+    const successGeo = async (data) => {
+      const coords = data.coords;
+
+      dispatch(
+        fetchWeatherData({
+          isGeo: true,
+          lon: coords.longitude,
+          lat: coords.latitude,
+        })
+      );
+    };
+
+    const denyGeo = (err) => dispatch(fetchWeatherData({ city }));
+
+    geo.getCurrentPosition(successGeo, denyGeo);
     // eslint-disable-next-line
   }, []);
 

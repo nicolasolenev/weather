@@ -1,27 +1,16 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
-import {
-  requestWeatherData,
-  fetchWeatherData,
-  requestWeatherForecastData,
-  fetchWeatherForecastData,
-  setSelectedCity,
-  deleteFavoriteCity,
-} from '../../store/actions';
+import { fetchWeatherData, deleteFavorite } from '../../store/reducers';
 
 export function Location({ city }) {
   const dispatch = useDispatch();
 
   const cityHandler = () => {
-    dispatch(setSelectedCity(city));
-    dispatch(requestWeatherData());
-    dispatch(fetchWeatherData(city));
-    dispatch(requestWeatherForecastData());
-    dispatch(fetchWeatherForecastData(city));
+    dispatch(fetchWeatherData({ city }));
   };
 
-  const deleteHandler = () => dispatch(deleteFavoriteCity(city));
+  const deleteHandler = () => dispatch(deleteFavorite({ city }));
 
   return (
     <li className="locations__li">
